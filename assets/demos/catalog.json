@@ -1,0 +1,34 @@
+[
+  {
+    "id": "coffee",
+    "title": "Pick up a coffee carton",
+    "titleZh": "拿起咖啡盒",
+    "frames": 150,
+    "fps": 30,
+    "duration": 5.0,
+    "category": "single",
+    "dataset": "H2O",
+    "sourceCase": "h2o_340_take_out_cappuccino",
+    "sourceFrames": [
+      241,
+      390
+    ],
+    "assets": "assets/demos/coffee/"
+  },
+  {
+    "id": "cocoa",
+    "title": "Reach for a cocoa box",
+    "titleZh": "拿取可可盒",
+    "frames": 150,
+    "fps": 30,
+    "duration": 5.0,
+    "category": "single",
+    "dataset": "H2O",
+    "sourceCase": "h2o_408_take_out_cocoa",
+    "sourceFrames": [
+      99,
+      248
+    ],
+    "assets": "assets/demos/cocoa/"
+  }
+]
