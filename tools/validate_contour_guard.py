@@ -41,6 +41,9 @@ def main(url):
                 page.locator('#trajectory-prev').click();assert page.evaluate('window.egoTrajectories.frame')==r['frames']-2
                 # Play through the end: this must wrap the mesh and video together.
                 page.locator('#trajectory-play').click();page.wait_for_timeout(450)
+                playing=page.evaluate('window.egoTrajectories')
+                if playing['decodedTime'] is not None:
+                    assert playing['frame']==int(playing['decodedTime']*30+1e-5)
                 page.locator('#trajectory-play').click();assert page.evaluate('window.egoTrajectories.frame')<r['frames']-2
                 if i==0 or len(r['objects'])==2:
                     for layer in ['scene','left','right','objects','axes','camera']:

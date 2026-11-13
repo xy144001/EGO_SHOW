@@ -7,7 +7,8 @@ const layerInputs=[...document.querySelectorAll('[data-layer]')];
 const colors=[0x62c4e0,0xd599e9];
 let catalog,record,data,packed,renderer,scene,camera,controls,group,cloud,cameraLayer,frustum;
 let hands=[],objects=[],axes=[],frame=0,lastFrame=-1,playing=false,speed=1,elapsed=0;
-let request=0,controller,mediaURL,visible=false,last=performance.now();
+let request=0,controller,mediaURL,visible=false,decodedTime=null;
+const decodedFrameClock='requestVideoFrameCallback' in video;
 const zh=()=>document.documentElement.lang.startsWith('zh');
 const text=(en,cn)=>zh()?cn:en;
 
@@ -66,7 +67,7 @@ function applyLayers(){
   snapshot();
 }
 function snapshot(){
-  window.egoTrajectories={loaded:!!data&&!!group,id:record?.id,frame,frames:data?.frames,playing,
+  window.egoTrajectories={loaded:!!data&&!!group,id:record?.id,frame,frames:data?.frames,playing,decodedTime,
     objectCount:objects.length,scenePoints:data?.points.length/3,
     layers:group?{scene:cloud.visible,left:hands[0].visible,right:hands[1].visible,objects:objects.every(m=>m.visible),axes:axes.every(a=>a.visible),camera:cameraLayer.visible}:{},
     objectMatrices:objects.map(o=>o.matrix.elements.slice()),cameraMatrix:frustum?.matrix.elements.slice(),
@@ -112,7 +113,7 @@ async function select(r){
     const [meta,buf,media]=await Promise.all([fetchAsset(r.assetBase+'scene.json.gz',controller.signal,'json'),fetchAsset(r.assetBase+'hands.bin.gz',controller.signal,'array'),fetchAsset(r.assetBase+'rgb.mp4',controller.signal,'blob')]);
     if(generation!==request)return;
     if(meta.frames!==r.frames||buf.byteLength!==meta.frames*2*meta.handVertices*3*2)throw Error('Incomplete trajectory data');
-    if(!renderer)init();data=meta;packed=new Uint16Array(buf);frame=0;elapsed=0;
+    if(!renderer)init();data=meta;packed=new Uint16Array(buf);frame=0;elapsed=0;decodedTime=null;
     if(mediaURL)URL.revokeObjectURL(mediaURL);mediaURL=URL.createObjectURL(media);video.src=mediaURL;
     build();$('#trajectory-timeline').max=data.frames-1;$('#trajectory-timeline').disabled=false;$('#trajectory-play').disabled=false;
     status('');root.setAttribute('aria-busy','false');syncVideo(true);renderText();
@@ -142,13 +143,19 @@ video.addEventListener('loadedmetadata',()=>syncVideo(true));
 document.addEventListener('visibilitychange',()=>syncVideo());
 new MutationObserver(renderText).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;syncVideo();},{threshold:.01}).observe($('#trajectory-player'));
-function tick(now){
-  const dt=Math.min((now-last)/1000,.1);last=now;
+function decodedFrame(now,metadata){
+  decodedTime=metadata.mediaTime;
+  if(data&&playing&&visible&&!document.hidden){
+    elapsed=decodedTime;frame=Math.min(data.frames-1,Math.floor(elapsed*data.fps+1e-5));update();renderer.render(scene,camera);
+  }
+  video.requestVideoFrameCallback(decodedFrame);
+}
+if(decodedFrameClock)video.requestVideoFrameCallback(decodedFrame);
+function tick(){
   if(data&&visible&&!document.hidden){
-    // The decoded RGB recording is the playback clock, including loop boundaries.
-    // This keeps geometry on the same frame even if video decoding stalls.
-    if(playing){elapsed=video.currentTime;frame=Math.min(data.frames-1,Math.floor(elapsed*data.fps));update();}
-    controls.update();renderer.render(scene,camera);
+    // On older browsers, use the media clock instead of a separate animation timer.
+    if(playing&&!decodedFrameClock){elapsed=video.currentTime;frame=Math.min(data.frames-1,Math.floor(elapsed*data.fps));update();}
+    const moved=controls.update();if(!playing||!decodedFrameClock||moved)renderer.render(scene,camera);
   }
   requestAnimationFrame(tick);
 }
