@@ -89,7 +89,7 @@ function update(){
 function syncVideo(force=false){
   if(data&&Number.isFinite(video.duration)&&(force||Math.abs(video.currentTime-elapsed)>.10))video.currentTime=Math.min(elapsed,video.duration-.001);
   video.playbackRate=speed;
-  if(playing&&visible&&!document.hidden)video.play().catch(()=>{});else video.pause();
+  if(playing&&visible&&!document.hidden){if(!video.seeking)video.play().catch(()=>{});}else video.pause();
   $('#trajectory-play').textContent=playing?'Ⅱ':'▶';
   $('#trajectory-play').setAttribute('aria-label',playing?text('Pause','暂停'):text('Play','播放'));
   $('#trajectory-play').setAttribute('aria-pressed',String(playing));snapshot();
@@ -140,6 +140,7 @@ $('#trajectory-prev').onclick=()=>seek(frame-1);$('#trajectory-next').onclick=()
 $('#trajectory-timeline').oninput=e=>seek(Number(e.target.value));
 $('#trajectory-speed').onchange=e=>{speed=Number(e.target.value);syncVideo();};
 video.addEventListener('loadedmetadata',()=>syncVideo(true));
+video.addEventListener('seeked',()=>{if(playing&&visible&&!document.hidden)video.play().catch(()=>{});});
 document.addEventListener('visibilitychange',()=>syncVideo());
 new MutationObserver(renderText).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;syncVideo();},{threshold:.01}).observe($('#trajectory-player'));

@@ -40,7 +40,8 @@ def main(url):
                 page.locator('#trajectory-next').click();assert page.evaluate('window.egoTrajectories.frame')==r['frames']-1
                 page.locator('#trajectory-prev').click();assert page.evaluate('window.egoTrajectories.frame')==r['frames']-2
                 # Play through the end: this must wrap the mesh and video together.
-                page.locator('#trajectory-play').click();page.wait_for_timeout(450)
+                page.locator('#trajectory-play').click()
+                page.wait_for_function('(n)=>egoTrajectories.playing&&egoTrajectories.frame<n-2',arg=r['frames'],timeout=8000)
                 playing=page.evaluate('window.egoTrajectories')
                 if playing['decodedTime'] is not None:
                     assert playing['frame']==int(playing['decodedTime']*30+1e-5)
