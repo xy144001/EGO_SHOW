@@ -1,0 +1,166 @@
+{
+  "schema": 1,
+  "release": "2026-11-13-contour-guard",
+  "scenes": [
+    {
+      "id": "s1h1lotion_move",
+      "title": "Lotion · lift and release",
+      "titleZh": "乳液瓶 · 拿起与放下",
+      "frames": 150,
+      "fps": 30,
+      "duration": 5.0,
+      "objects": [
+        "s1h1lotion_move"
+      ],
+      "group": "diverse4",
+      "assetBase": "assets/trajectories/s1h1lotion_move/"
+    },
+    {
+      "id": "s1h1spray_move",
+      "title": "Spray · hand interaction",
+      "titleZh": "喷雾瓶 · 手部交互",
+      "frames": 120,
+      "fps": 30,
+      "duration": 4.0,
+      "objects": [
+        "s1h1spray_move"
+      ],
+      "group": "diverse4",
+      "assetBase": "assets/trajectories/s1h1spray_move/"
+    },
+    {
+      "id": "s1h1chips_move",
+      "title": "Chips · grasp and move",
+      "titleZh": "薯片筒 · 抓取与移动",
+      "frames": 120,
+      "fps": 30,
+      "duration": 4.0,
+      "objects": [
+        "s1h1chips_move"
+      ],
+      "group": "diverse4",
+      "assetBase": "assets/trajectories/s1h1chips_move/"
+    },
+    {
+      "id": "s1h2espresso",
+      "title": "Espresso · tabletop lift",
+      "titleZh": "咖啡盒 · 桌面拿取",
+      "frames": 150,
+      "fps": 30,
+      "duration": 5.0,
+      "objects": [
+        "s1h2espresso"
+      ],
+      "group": "projective6",
+      "assetBase": "assets/trajectories/s1h2espresso/"
+    },
+    {
+      "id": "s1k2espresso",
+      "title": "Espresso · two-hand motion",
+      "titleZh": "咖啡盒 · 双手交互",
+      "frames": 150,
+      "fps": 30,
+      "duration": 5.0,
+      "objects": [
+        "s1k2espresso"
+      ],
+      "group": "projective6",
+      "assetBase": "assets/trajectories/s1k2espresso/"
+    },
+    {
+      "id": "s1o1espresso",
+      "title": "Espresso · another viewpoint",
+      "titleZh": "咖啡盒 · 不同视角",
+      "frames": 150,
+      "fps": 30,
+      "duration": 5.0,
+      "objects": [
+        "s1o1espresso"
+      ],
+      "group": "projective6",
+      "assetBase": "assets/trajectories/s1o1espresso/"
+    },
+    {
+      "id": "s3h1espresso",
+      "title": "Espresso · reach and grasp",
+      "titleZh": "咖啡盒 · 接近与抓取",
+      "frames": 150,
+      "fps": 30,
+      "duration": 5.0,
+      "objects": [
+        "s3h1espresso"
+      ],
+      "group": "projective6",
+      "assetBase": "assets/trajectories/s3h1espresso/"
+    },
+    {
+      "id": "s3k2espresso",
+      "title": "Espresso + independent mug",
+      "titleZh": "咖啡包装 + 独立杯子",
+      "frames": 150,
+      "fps": 30,
+      "duration": 5.0,
+      "objects": [
+        "s3k2espresso",
+        "s3k2espresso_mug"
+      ],
+      "group": "projective6",
+      "assetBase": "assets/trajectories/s3k2espresso/"
+    },
+    {
+      "id": "s3k1book",
+      "title": "Book · lift and hold",
+      "titleZh": "闭合书本 · 拿起与持握",
+      "frames": 150,
+      "fps": 30,
+      "duration": 5.0,
+      "objects": [
+        "s3k1book"
+      ],
+      "group": "projective6",
+      "assetBase": "assets/trajectories/s3k1book/"
+    },
+    {
+      "id": "s1h1espresso",
+      "title": "Espresso · sequence 01",
+      "titleZh": "咖啡盒 · 原始轨迹 01",
+      "frames": 150,
+      "fps": 30,
+      "duration": 5.0,
+      "objects": [
+        "s1h1espresso"
+      ],
+      "group": "original3",
+      "assetBase": "assets/trajectories/s1h1espresso/"
+    },
+    {
+      "id": "s1k1espresso",
+      "title": "Espresso · sequence 02",
+      "titleZh": "咖啡盒 · 原始轨迹 02",
+      "frames": 150,
+      "fps": 30,
+      "duration": 5.0,
+      "objects": [
+        "s1k1espresso"
+      ],
+      "group": "original3",
+      "assetBase": "assets/trajectories/s1k1espresso/"
+    },
+    {
+      "id": "s3k1spray",
+      "title": "Spray · through occlusion",
+      "titleZh": "喷雾瓶 · 遮挡过程",
+      "frames": 150,
+      "fps": 30,
+      "duration": 5.0,
+      "objects": [
+        "s3k1spray"
+      ],
+      "group": "original3",
+      "assetBase": "assets/trajectories/s3k1spray/"
+    }
+  ],
+  "sceneCount": 12,
+  "objectCount": 13,
+  "frameCount": 1740
+}

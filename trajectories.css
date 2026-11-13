@@ -1,0 +1,40 @@
+.trajectory-section{scroll-margin-top:100px;padding-top:90px;padding-bottom:90px}
+.trajectory-section .section-top{margin-bottom:30px}.trajectory-section .section-description{max-width:370px}
+.trajectory-summary{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 24px;color:#476458;font-size:12px;letter-spacing:.04em}
+.trajectory-summary span{border:1px solid #d7ded6;padding:7px 12px;border-radius:20px}
+.trajectory-cases{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:24px}
+.trajectory-card{position:relative;border:1px solid #d6dcd4;border-radius:9px;background:#fff;overflow:hidden;padding:0;text-align:left;color:#253f35;cursor:pointer;transition:transform .15s,border-color .15s;min-width:0}
+.trajectory-card:hover{transform:translateY(-2px);border-color:#789286}.trajectory-card[aria-pressed=true]{border-color:#236d50;box-shadow:0 0 0 2px #236d50}
+.trajectory-card img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.trajectory-card-name{display:block;padding:9px 10px 11px;font-size:11px;line-height:1.45;min-height:48px;font-weight:600}
+.trajectory-card-number{position:absolute;top:7px;left:7px;background:#163b2ddb;color:white;padding:3px 6px;border-radius:3px;font:10px monospace}
+.trajectory-player{border:1px solid #cfdbd1;border-radius:14px;overflow:hidden;background:#fff}
+.trajectory-heading{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:22px 25px}
+.trajectory-heading h3{font-size:23px;margin:4px 0 0;letter-spacing:-.025em}.trajectory-heading .eyebrow{font-size:10px;margin:0}
+.trajectory-heading button{border:1px solid #ccd6ce;border-radius:6px;padding:8px 12px;background:#fff;color:#2b5241;cursor:pointer;white-space:nowrap}
+.trajectory-layers{border:0;border-top:1px solid #e4e8e2;margin:0;padding:13px 25px;display:flex;gap:12px 22px;flex-wrap:wrap;background:#f6f8f3}
+.trajectory-layers legend{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.trajectory-layers label{display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;min-height:26px;color:#294839}
+.trajectory-layers input{accent-color:#337851;width:15px;height:15px;margin:0}
+.trajectory-views{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);background:#172d29;color:#e8efe8}
+.trajectory-canvas{position:relative;min-width:0;height:480px;touch-action:none;overflow:hidden}
+.trajectory-canvas canvas{display:block;width:100%;height:100%}
+.trajectory-scene-label{position:absolute;top:16px;left:20px;pointer-events:none;color:#d8e7d8;font:10px monospace;letter-spacing:.11em}
+.trajectory-axis-legend{position:absolute;bottom:15px;left:20px;pointer-events:none;font-size:10px;color:#d0dfd5}.trajectory-axis-legend b{font-weight:600;padding-right:10px}.trajectory-axis-legend .x{color:#ff8b77}.trajectory-axis-legend .y{color:#a7e992}.trajectory-axis-legend .z{color:#9aaeff}
+.trajectory-status{position:absolute;inset:0;display:grid;place-content:center;padding:32px;background:#172d29ed;text-align:center;font-size:14px;z-index:3}.trajectory-status[hidden]{display:none}
+.trajectory-reference{border-left:1px solid #ffffff16;padding:18px;min-width:0}.trajectory-reference figure{margin:0}.trajectory-reference figcaption{font-size:10px;letter-spacing:.12em;margin-bottom:11px;color:#d4dfd1}
+.trajectory-reference video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;border-radius:6px;background:#10241f}
+.trajectory-reference #trajectory-id{font:11px monospace;overflow-wrap:anywhere;color:#c5d6ca;margin-top:20px}
+.trajectory-reference #trajectory-meta{font:12px monospace;color:#e8f0e4;margin:9px 0 18px}
+.trajectory-reference #trajectory-object-list{font-size:13px;color:#b3dedb;line-height:1.5}
+.trajectory-reference #trajectory-note{font-size:12px;line-height:1.7;color:#c0d0c4;margin-top:8px}
+.trajectory-reference a{display:inline-block;font-size:11px;color:#d0e6d7;margin-top:10px;text-decoration:underline;text-underline-offset:4px}
+.trajectory-transport{display:flex;align-items:center;gap:10px;padding:16px 22px;background:#eff3ed;color:#32503f}
+.trajectory-transport button,.trajectory-transport select{border:1px solid #cbd7cb;background:white;border-radius:5px;height:33px;min-width:33px;color:inherit;cursor:pointer;font:13px inherit}.trajectory-transport button:disabled{opacity:.4}
+.trajectory-transport input{flex:1;min-width:30px;accent-color:#347856;cursor:pointer}.trajectory-transport output{font:11px monospace;white-space:nowrap}.trajectory-transport #trajectory-time{min-width:92px;text-align:right}
+.trajectory-footnote{font-size:12px;line-height:1.8;color:#6e776c;margin:17px 0 0}.trajectory-footnote a{text-decoration:underline;text-underline-offset:3px}
+.trajectory-section :focus-visible{outline:3px solid #e9643f;outline-offset:3px}
+@media(min-width:1500px){.trajectory-canvas{height:520px}}
+@media(max-width:1000px){.trajectory-cases{grid-template-columns:repeat(4,minmax(0,1fr))}.trajectory-canvas{height:420px}.trajectory-heading h3{font-size:20px}.trajectory-layers{gap:10px 18px}}
+@media(max-width:680px){.trajectory-section{padding-top:60px;padding-bottom:55px;scroll-margin-top:75px}.trajectory-cases{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.trajectory-card-name{font-size:10px;padding:8px;min-height:45px}.trajectory-heading{padding:18px 14px;align-items:flex-start}.trajectory-heading h3{font-size:18px}.trajectory-heading button{padding:7px;font-size:11px}.trajectory-layers{padding:10px 14px;gap:8px 12px}.trajectory-layers label{font-size:11px;min-height:30px}.trajectory-views{grid-template-columns:1fr}.trajectory-canvas{height:350px}.trajectory-reference{border-left:0;border-top:1px solid #ffffff16;padding:15px}.trajectory-reference #trajectory-id{margin-top:15px}.trajectory-reference #trajectory-meta{margin-bottom:10px}.trajectory-reference #trajectory-note{margin-bottom:0}.trajectory-transport{padding:13px 10px;gap:6px;flex-wrap:wrap}.trajectory-transport input{min-width:80px}.trajectory-transport #trajectory-time{display:none}.trajectory-transport output{font-size:10px}.trajectory-transport button{min-width:28px}.trajectory-transport select{max-width:58px}}
+@media(prefers-reduced-motion:reduce){.trajectory-card{transition:none}.trajectory-card:hover{transform:none}}
