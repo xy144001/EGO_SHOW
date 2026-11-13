@@ -1,5 +1,5 @@
 import {gunzipSync} from './assets/vendor/fflate.module.js';
-let THREE,OrbitControls,rendererPromise,graphicsMode,resizeObserver;
+let THREE,OrbitControls,rendererPromise,graphicsMode,resizeObserver,engineAttempt=0;
 
 const $=s=>document.querySelector(s);
 const root=$('#trajectory-canvas'), video=$('#trajectory-video');
@@ -19,16 +19,28 @@ function dispose(){
   group.traverse(o=>{o.geometry?.dispose();if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());});
   scene.remove(group);group=null;hands=[];objects=[];axes=[];
 }
+async function loadEngine(mode){
+  if(THREE&&graphicsMode===mode)return;
+  const path=`./assets/vendor/renderer-${mode}.module.js`;let failure;
+  for(let attempt=0;attempt<3;attempt++){
+    // Each retry gets a new module URL: browsers remember failed imports.
+    const suffix=engineAttempt++?`?retry=${engineAttempt}`:'';
+    try{const engine=await import(path+suffix);THREE=engine;OrbitControls=engine.OrbitControls;graphicsMode=mode;return;}
+    catch(e){failure=Object.assign(new Error(e.message),{code:'ASSET_DOWNLOAD',resource:path});}
+    if(attempt<2)await new Promise(resolve=>setTimeout(resolve,350*(attempt+1)));
+  }
+  throw failure;
+}
 async function init(){
   const canvas=document.createElement('canvas');
   let context;
   try{context=canvas.getContext('webgl2',{antialias:true,alpha:false});}catch{}
   if(context){
-    [THREE,{OrbitControls}]=await Promise.all([import('./assets/vendor/three.module.js'),import('./assets/vendor/OrbitControls.js')]);graphicsMode='webgl2';
+    await loadEngine('webgl2');
   }else{
     try{context=canvas.getContext('webgl',{antialias:false,alpha:false});}catch{}
     if(!context){const error=new Error('No WebGL graphics context is available');error.code='WEBGL_UNAVAILABLE';throw error;}
-    [THREE,{OrbitControls}]=await Promise.all([import('./assets/vendor/webgl1/three.module.js'),import('./assets/vendor/webgl1/OrbitControls.js')]);graphicsMode='webgl1';
+    await loadEngine('webgl1');
   }
   renderer=new THREE.WebGLRenderer({canvas,context});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setClearColor(0x172d29);renderer.outputColorSpace=THREE.SRGBColorSpace;

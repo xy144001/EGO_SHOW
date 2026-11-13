@@ -7,7 +7,7 @@ os.environ.setdefault('TMPDIR','/data1/xy/egohand/tmp')
 from playwright.sync_api import sync_playwright
 
 SITE=Path(__file__).resolve().parents[1]
-MODES=['normal','no_decompression','video_network_error','already_decoded','http_gzip','webgl1','webgl_unavailable','geometry_failure','transient_network','context_loss']
+MODES=['normal','no_decompression','video_network_error','already_decoded','http_gzip','webgl1','webgl_unavailable','geometry_failure','transient_network','context_loss','engine_network','engine_retry']
 
 def main(url,output,modes):
     output.mkdir(parents=True,exist_ok=True);rows=[]
@@ -19,6 +19,7 @@ def main(url,output,modes):
             if mode=='no_decompression':page.add_init_script('delete window.DecompressionStream')
             if mode=='video_network_error':page.route('**/assets/trajectories/**/rgb.mp4*',lambda r:r.abort('failed'))
             if mode=='geometry_failure':page.route('**/assets/trajectories/**/hands.bin.gz*',lambda r:r.abort('failed'))
+            if mode=='engine_retry':page.route('**/renderer-webgl2.module.js*',lambda r:r.abort('failed'))
             if mode in ['already_decoded','http_gzip']:
                 def decoded(route):
                     name=Path(urlsplit(route.request.url).path).name
@@ -29,13 +30,13 @@ def main(url,output,modes):
             if mode in ['webgl1','webgl_unavailable']:
                 condition='t==="webgl2"' if mode=='webgl1' else 't.includes("webgl")'
                 page.add_init_script('const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(t,...a){return '+condition+'?null:original.call(this,t,...a)}')
-            if mode=='transient_network':
+            if mode in ['transient_network','engine_network']:
                 count=[0]
                 def transient(route):
                     count[0]+=1
                     if count[0]==1:route.abort('failed')
                     else:route.continue_()
-                page.route('**/assets/trajectories/**/hands.bin.gz*',transient)
+                page.route('**/renderer-webgl2.module.js*' if mode=='engine_network' else '**/assets/trajectories/**/hands.bin.gz*',transient)
             page.goto(url+'#data')
             page.wait_for_function('window.egoTrajectories?.loaded || !document.querySelector("#trajectory-retry").hidden',timeout=60000)
             page.locator('#trajectory-player').scroll_into_view_if_needed()
@@ -44,13 +45,13 @@ def main(url,output,modes):
                 page.locator('#trajectory-canvas canvas').evaluate('(el)=>el.getContext("webgl2").getExtension("WEBGL_lose_context").loseContext()')
                 page.wait_for_function('!window.egoTrajectories.loaded && !document.querySelector("#trajectory-retry").hidden')
                 page.locator('#trajectory-retry').click();page.wait_for_function('window.egoTrajectories.loaded',timeout=30000)
-            if mode in ['webgl_unavailable','geometry_failure']:
+            if mode in ['webgl_unavailable','geometry_failure','engine_retry']:
                 assert not state['loaded'] and state['error'],state
                 page.wait_for_function('document.querySelector("#trajectory-video").readyState>=2')
                 page.locator('#trajectory-video').evaluate('(v)=>v.play()')
                 page.wait_for_function('document.querySelector("#trajectory-video").currentTime>.1')
-                if mode=='geometry_failure':
-                    page.unroute('**/assets/trajectories/**/hands.bin.gz*')
+                if mode in ['geometry_failure','engine_retry']:
+                    page.unroute('**/renderer-webgl2.module.js*' if mode=='engine_retry' else '**/assets/trajectories/**/hands.bin.gz*')
                     page.locator('#trajectory-retry').click();page.wait_for_function('window.egoTrajectories?.loaded',timeout=60000)
             else:
                 assert state['loaded'],state

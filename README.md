@@ -54,3 +54,12 @@ PYTHONPATH=/home/xy/EGO /data1/xy/egohand/venv_object/bin/python tools/export_co
 示例源数据为 [H2O](https://github.com/taeinkwon/h2odataset)，遵循原数据集要求。重建媒体由本项目已有流程产生；未使用 EgoXperience 的视频或三维资产。页面参考研究项目的展示组织方式，设计与实现独立完成，与 EgoXperience 无隶属关系。
 
 Three.js / OrbitControls 与 fflate 均保留各自的 MIT 许可证于 `assets/vendor/`。重建结果不是 ground truth。没有虚构论文、作者、精度指标或已完成的多部件展示。
+
+## 重建渲染器模块
+
+两个渲染器入口打包为各一个独立 ESM 模块，避免失败的共享依赖被浏览器缓存后无法重试。使用固定版本 esbuild，生成物本地托管：
+
+```bash
+NPM_CONFIG_CACHE=/data1/xy/egohand/cache/npm npx --yes esbuild@0.25.12 assets/vendor/renderer-webgl2.entry.js --bundle --format=esm --minify --target=es2020 --outfile=assets/vendor/renderer-webgl2.module.js
+NPM_CONFIG_CACHE=/data1/xy/egohand/cache/npm npx --yes esbuild@0.25.12 assets/vendor/renderer-webgl1.entry.js --bundle --format=esm --minify --target=es2020 --outfile=assets/vendor/renderer-webgl1.module.js
+```
