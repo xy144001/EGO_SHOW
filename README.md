@@ -13,7 +13,7 @@ EGO 轨迹展示网站。暖白与墨绿色的简洁研究页面，展示第一�
 - 六个独立复选框：Scene、Left hand、Right hand、Object mesh、6DoF axes、Camera。物体网格与坐标轴分别控制；双物体场景一起控制两件物体。
 - 逐帧、播放 / 暂停、0.25× / 0.5× / 1× / 2×、旋转 / 缩放 / 复位，与原始 RGB 同步。图层选择在切换场景后保留。
 - Scene 为实测 RGB-D 多关键帧背景点云，排除物体 mask 与投影手网格；Camera 为标定视锥和轨迹。不是完整场景网格，仍可能含深度噪声与动态残留。
-- 两条早期基线保留于旧展示区。双物体场景中的杯子在桌上，不代表双手分别持有独立物体。
+- 旧首页播放器与两个旧示例入口已移除。双物体场景中的杯子在桌上，不代表双手分别持有独立物体。
 
 新播放器：`trajectories.js` / `trajectories.css`。场景与卡片由 `assets/trajectories/catalog.json` 自动生成。每场景含 `scene.json.gz`、`hands.bin.gz`、`rgb.mp4`、`poster.jpg`。
 
@@ -27,68 +27,30 @@ PYTHONPATH=/home/xy/EGO /data1/xy/egohand/venv_object/bin/python tools/export_co
   --qa /data1/xy/egohand/sites/ego-show-qa/20261113
 ```
 
-## 保留的初版展示
+## 加载与兼容性修复
 
-- 英文 / 中文切换，桌面与手机响应式布局。
-- Three.js 三维预览：实际重建手网格、物体预览网格、场景点云和物体坐标原点轨迹；拖动旋转、缩放、视角重置、点云开关。
-- 时间轴、播放/暂停、0.5× / 1× / 2× 播放；同步显示原始 RGB 录像。
-- 两条现有 H2O 单物体示例，点击卡片查看录像，并切换到对应三维轨迹。
-- 多部件交互单独显示为研究中的方向，没有伪装成已发布结果。
-- 键盘可用的分类标签与弹窗；减少动画偏好；WebGL 不可用时提供原视频链接。
-
-旧展示区复用早期单物体基线；上方最新轨迹集使用后续已采用的轮廓保护结果。
+- 原视频独立加载并提供原生播放控件；视频失败不会阻止三维展示，三维失败也不会阻止原视频播放。
+- 三维资源会自动重试临时网络失败，页面提供单独的三维/视频重载按钮。
+- 使用本地固定版本 fflate 0.8.2 解码 gzip，根据实际文件头识别是否已经由服务器解压，不依赖浏览器的 DecompressionStream。
+- 默认使用 Three.js r170 / WebGL 2；只有 WebGL 1 时按需加载 r160 兼容渲染器。两个版本均本地托管。浏览器完全禁用图形时显示具体原因，原视频仍可播放。
+- 首页只保留一个实际轨迹播放器；旧占位视频及旧示例资源从当前网站移除，数据盘备份和 Git 历史仍保留。
 
 ## 本地运行
 
-无需 Node 或安装前端依赖：
-
-```bash
-python3 -m http.server 8000
-```
-
-打开 `http://localhost:8000`。不要双击 `index.html` 使用 file://；浏览器会限制模块脚本和 fetch。
+静态网站，无需构建。使用支持 HTTP Range 的静态服务预览视频，例如 `python tools/serve_preview.py`，打开 `http://127.0.0.1:8765`。
 
 ## 文件结构
 
-```text
-index.html                 页面、弹窗和初始英文内容
-styles.css                 桌面 / 手机样式
-app.js                     播放器、Three.js、中文文案、界面交互
-assets/vendor/             本地 Three.js 0.170.0 与 OrbitControls，无外部 CDN 运行依赖
-assets/demos/catalog.json  展示资产的来源和元数据清单
-assets/demos/{case}/
-  scene.json               轻量网格、位姿、拓扑、点云、量化信息
-  hands.bin.gz             量化并压缩的逐帧手顶点
-  rgb.mp4                  展示用 RGB 视频
-  poster.jpg               封面
-```
-
-旧展示区的卡片与文案在 `index.html` / `app.js` 中显式定义，catalog 是来源清单，不是自动生成页面的 CMS。增加案例时需同时添加资产、卡片、标题映射与相关来源信息。
-
-## 展示数据与真实研究输出
-
-以下采样说明仅适用于旧展示区：源录像 30 fps / 150 帧 / 5 秒。网页手网格与物体位姿每 3 帧采样，**三维预览为 10 fps / 50 帧**；RGB 视频仍是完整源片段。手顶点逐轴 uint16 量化，物体网格使用确定性顶点聚类做展示 LOD。统一变换成浏览器坐标；网格颜色仅用于区分手和物体。
-
-这些处理只用于浏览器展示，不改变原始轨迹、不回流数值评估，也不表示零误差。场景参考网格没有声称重力对齐。完整 NPZ、原始网格和封存包留在数据盘，不上传到展示仓库。
-
-导出工具 `tools/export_previews.py` 读取原封存目录：
-
-```bash
-python tools/export_previews.py \
-  --source /data1/xy/egohand/outputs/pipeline4_h2o_20261104 \
-  --output /data1/xy/egohand/sites/ego-show/assets/demos
-```
-
-需要 numpy、trimesh、ffmpeg；所有大文件输出必须在 `/data1` 或 `/data2`。
+`index.html` / `styles.css` / `app.js` 负责页面与语言；`trajectories.js` / `trajectories.css` 负责互动播放器。资产位于 `assets/trajectories`，依赖和许可证位于 `assets/vendor`。
 
 ## 部署
 
 纯静态 GitHub Pages：Settings → Pages → Deploy from a branch → `main` / `(root)`。仓库包含 `.nojekyll`。若使用其它静态主机，同样直接发布仓库根目录即可。
 
-`_headers` 不需要；服务端应正确提供 MP4、JSON、JS 和 `.gz`。压缩手数据由 JS 的 `DecompressionStream('gzip')` 显式解压，勿再把 `.bin.gz` 错误设置成自动解压的 Content-Encoding 后仍重复解压。
+`_headers` 不需要；服务端应正确提供 MP4、JSON、JS 和 `.gz`。压缩数据由页面检查 gzip 文件头后解码，也兼容服务端已进行 HTTP 解压的响应。
 
 ## 来源与许可
 
 示例源数据为 [H2O](https://github.com/taeinkwon/h2odataset)，遵循原数据集要求。重建媒体由本项目已有流程产生；未使用 EgoXperience 的视频或三维资产。页面参考研究项目的展示组织方式，设计与实现独立完成，与 EgoXperience 无隶属关系。
 
-Three.js / OrbitControls 保留 MIT 许可于 `assets/vendor/THREE-LICENSE.txt`。重建结果不是 ground truth。没有虚构论文、作者、精度指标或已完成的多部件展示。
+Three.js / OrbitControls 与 fflate 均保留各自的 MIT 许可证于 `assets/vendor/`。重建结果不是 ground truth。没有虚构论文、作者、精度指标或已完成的多部件展示。

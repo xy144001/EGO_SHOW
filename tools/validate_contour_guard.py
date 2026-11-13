@@ -7,7 +7,7 @@ os.environ['TMPDIR']='/data1/xy/egohand/tmp'
 from playwright.sync_api import sync_playwright
 
 SITE=Path('/data1/xy/egohand/sites/ego-show')
-QA=Path('/data1/xy/egohand/sites/ego-show-qa/20261113')
+QA=Path('/data1/xy/egohand/sites/ego-show-qa/20261113-fix')
 
 def main(url):
     catalog=json.loads((SITE/'assets/trajectories/catalog.json').read_text());rows=[]
@@ -73,7 +73,7 @@ def main(url):
             page.wait_for_function('window.egoTrajectories?.loaded&&window.egoTrajectories.id==="s1h1chips_move"',timeout=90000)
             assert page.evaluate('window.egoTrajectories.layers.scene') is False
             page.locator('[data-layer="scene"]').check()
-            # Existing archive and language controls still work.
+            # Language and case controls still work.
             page.locator('#language').click();assert page.locator('#trajectory-title').inner_text().startswith('薯片筒')
             assert page.locator('#trajectory-section-title').inner_text()=='逐帧观察，自由切换图层。'
             assert not errors and not bad,(errors,bad)
@@ -83,7 +83,7 @@ def main(url):
         assert page.locator('noscript a[href*="lotion"]').is_visible();page.close()
         # GPU failure must keep the direct video usable.
         page=browser.new_page();page.add_init_script("const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(t,...a){return t.includes('webgl')?null:original.call(this,t,...a)}")
-        page.goto(url+'#data');page.wait_for_function('document.querySelector("#trajectory-status").textContent.includes("3D could not load")',timeout=90000)
+        page.goto(url+'#data');page.wait_for_function('document.querySelector("#trajectory-status").textContent.includes("could not start 3D graphics")',timeout=90000)
         assert page.locator('#trajectory-video-link').get_attribute('href').endswith('/rgb.mp4');page.close();browser.close()
     (QA/('live_browser_validation.json' if url.startswith('https:') else 'browser_validation.json')).write_text(json.dumps(dict(passed=True,url=url,checks=rows),indent=2)+'\n')
 
